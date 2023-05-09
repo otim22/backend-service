@@ -6,7 +6,7 @@ import * as winston from 'winston';
 import * as expressWinston from 'express-winston';
 import cors from 'cors';
 import { CommonRoutesConfig } from './common/routes.config';
-import { UsersRoutes } from './users/routes.config';
+import { UsersRoutes } from './models/users/routes.config';
 import debug, { IDebugger } from 'debug';
 
 dotenv.config();

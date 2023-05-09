@@ -1,4 +1,4 @@
-import { CommonRoutesConfig } from '../common/routes.config';
+import { CommonRoutesConfig } from '../../common/routes.config';
 import { Request, Response, Application, NextFunction } from 'express';
 
 export class UsersRoutes extends CommonRoutesConfig {
