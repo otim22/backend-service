@@ -1,12 +1,11 @@
 import express, { Application, Request, Response } from 'express';
 import * as http from 'http';
 import dotenv from 'dotenv';
-
 import * as winston from 'winston';
 import * as expressWinston from 'express-winston';
 import cors from 'cors';
-import { CommonRoutesConfig } from './common/routes.config';
-import { UsersRoutes } from './models/users/routes.config';
+import { CommonRoutesConfig } from './src/common/routes.config';
+import { UsersRoutes } from './src/models/users/routes.config';
 import debug, { IDebugger } from 'debug';
 
 dotenv.config();
