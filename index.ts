@@ -1,17 +1,22 @@
 import express, { Application, Request, Response } from 'express';
 import * as http from 'http';
-import dotenv from 'dotenv';
+import * as dotenv from "dotenv";
 import * as winston from 'winston';
 import * as expressWinston from 'express-winston';
 import cors from 'cors';
-import { CommonRoutesConfig } from './src/common/routes.config';
-import { UsersRoutes } from './src/models/users/routes.config';
+// import { CommonRoutesConfig } from './src/common/routes.config';
+// import { UsersRoutes } from './src/routes/user.route';
+import { route } from "./src/routes";
 import debug, { IDebugger } from 'debug';
+import "reflect-metadata"
+import connectDB from "./src/config/ormconfig";
 
 dotenv.config();
+connectDB
+
 const app: Application = express();
 const server: http.Server = http.createServer(app);
-const routes: Array<CommonRoutesConfig> = [];
+// const routes: Array<CommonRoutesConfig> = [];
 const debugLog: IDebugger = debug('app');
 const port = process.env.PORT;
 
@@ -32,7 +37,9 @@ if (!process.env.DEBUG) {
 }
 
 app.use(expressWinston.logger(loggerOptions));
-routes.push(new UsersRoutes(app));
+route(app);
+
+// routes.push(new UsersRoutes(app));
 
 const runningMessage = `Server running at http://localhost:${port}`;
 app.get('/', (req: Request, res: Response) => {
@@ -40,9 +47,10 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 server.listen(port, () => {
-    routes.forEach((route: CommonRoutesConfig) => {
-        debugLog(`Routes configured for ${route.getName()}`);
-    });
+    console.log(`app is running on port ${port}`);
+    // routes.forEach((route: CommonRoutesConfig) => {
+    //     debugLog(`Routes configured for ${route.getName()}`);
+    // });
     // our only exception to avoiding console.log(), because we
     // always want to know when the server is done starting up
     console.log(runningMessage);
