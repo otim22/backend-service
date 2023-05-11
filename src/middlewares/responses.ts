@@ -18,21 +18,15 @@ class Res {
         message: string, 
         res: Response
     ) => {
-        return res.status(status).json({
-            status,
-            message,
-        });
+        return res.status(status).json({ status, message });
     };
 
     public error = (
         status: number, 
         message: string, 
-        res: Response
+        res: Response,
     ) => {
-        return res.status(status).json({
-            status,
-            message,
-        });
+        return res.status(status).json({ status, message });
     };
 }
 

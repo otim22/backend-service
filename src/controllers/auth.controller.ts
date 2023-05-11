@@ -1,36 +1,29 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { middlewares } from "../middlewares";
 import Service from "../services";
 import { sign, verify } from 'jsonwebtoken';
+import { validationResult } from 'express-validator';
+import bcrypt from 'bcryptjs';
 
 const { responses, messages, codes } = middlewares;
 const { User } = Service;
 
 class UserController {
     register = async (req: Request, res: Response) => {
-        const {
-            name,
-            email,
-            password
-        }: {
+        let { name, email, password }: {
             name: string;
             email: string;
             password: string;
         } = req.body;
 
-        if(!name || !email || !password){
+        if(!name || !email || !password) {
             return responses.error(codes.unauthorizedError(), messages.loginMessage(), res);
         }
 
-        const response = await User.register({
-            name,
-            email,
-            password
-        });
+        password = this.encryptPassWord(password);
+        let response = await User.register({ name, email, password });
       
-        if (!response) {
-            return responses.error(codes.conflict(), messages.registerMessage(), res);
-        }
+        if (!response) return responses.error(codes.conflict(), messages.registerMessage(), res);
       
         return responses.success(
             codes.created(),
@@ -40,41 +33,49 @@ class UserController {
         );
     }
 
-    login = async (req: Request, res: Response) => {
-        const { email, password  }:  { email: string; password: string } = req.body;
+    login = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            let errorMessages: any = validationResult(req);
+            
+            if (!errorMessages.isEmpty()) {
+                return responses.success(
+                    codes.error(),
+                    messages.validationError(),
+                    { errorMessages },
+                    res
+                );
+            }
 
-        if(!email || !password){
-            return responses.error(codes.unauthorizedError(), messages.loginMessage(), res);
-        }
+            let { email, password  }:  { email: string; password: string } = req.body;
+            
+            const user = await User.login(email, password);
 
-        const user = await User.login(email, password);
+            if (!user) {
+                return responses.error(codes.unauthorizedError(), messages.loginMessage(), res);
+            }
     
-        if (!user) {
-          return responses.error(codes.unauthorizedError(), messages.loginMessage(), res);
-        }
-
-        const accessToken = sign({ id: user.id
-        }, "access_secret", { expiresIn: 60 * 60 });
-
-        const refreshToken = sign({id: user.id
-        }, "refresh_secret", { expiresIn: 24 * 60 * 60 })
-
-        res.cookie('access_token', accessToken, {
-            httpOnly: true,
-            maxAge: 24 * 60 * 60 * 1000 //equivalent to 1 day
-        });
-
-        res.cookie('refresh_token', refreshToken, {
-            httpOnly: true,
-            maxAge: 7 * 24 * 60 * 60 * 1000 //equivalent to 7 days
-        })
+            const accessToken = sign({ id: user.id }, "access_secret", { expiresIn: 60 * 60 });
+            const refreshToken = sign({id: user.id }, "refresh_secret", { expiresIn: 24 * 60 * 60 })
     
-        return responses.success(
-            codes.ok(),
-            messages.success(),
-            { email, accessToken },
-            res
-        );
+            res.cookie('access_token', accessToken, {
+                httpOnly: true,
+                maxAge: 24 * 60 * 60 * 1000 //equivalent to 1 day
+            });
+    
+            res.cookie('refresh_token', refreshToken, {
+                httpOnly: true,
+                maxAge: 7 * 24 * 60 * 60 * 1000 //equivalent to 7 days
+            })
+        
+            return responses.success(
+                codes.ok(),
+                messages.success(),
+                { email, accessToken },
+                res
+            );
+        } catch (err) {
+            next(err);
+        }
     };
 
     authenticatedUser = async (req: Request, res: Response) => {
@@ -141,6 +142,10 @@ class UserController {
             {},
             res
         );
+    }
+
+    encryptPassWord = (password: string) => {
+        return bcrypt.hashSync(password, bcrypt.genSaltSync(10));
     }
 }
 

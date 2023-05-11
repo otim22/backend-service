@@ -3,6 +3,8 @@ import BlogController from "../controllers/blog.controller";
 import UserController from "../controllers/auth.controller";
 import { middlewares } from "../middlewares/index";
 import { authMiddleware } from "../middlewares/authMidddleware";
+import { loginValidation } from "../validations/login.validation";
+import { checkSchema } from 'express-validator';
 
 const { responses, messages, codes } = middlewares;
 const Blog = new BlogController();
@@ -20,7 +22,7 @@ class Routes {
     app.put("/api/v1/blogs/update/:id", Blog.updateBlog);
     app.delete("/api/v1/blogs/delete/:id", Blog.deleteBlog);
     
-    app.post("/api/v1/login", User.login);
+    app.post("/api/v1/login", checkSchema(loginValidation), User.login);
     app.post("/api/v1/register", User.register);
     app.get("/api/v1/authenticatedUser", User.authenticatedUser);
     app.post("/api/v1/refreshPage", User.refreshPage);

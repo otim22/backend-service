@@ -5,7 +5,6 @@ import * as winston from 'winston';
 import * as expressWinston from 'express-winston';
 import cors from 'cors';
 import { route } from "./src/routes";
-import debug, { IDebugger } from 'debug';
 import "reflect-metadata"
 import connectDB from "./src/config/ormconfig";
 import cookieParser from "cookie-parser";
@@ -15,7 +14,6 @@ connectDB
 
 const app: Application = express();
 const server: http.Server = http.createServer(app);
-const debugLog: IDebugger = debug('app');
 const port = process.env.PORT || "3001";
 
 app.use(express.json());
