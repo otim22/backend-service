@@ -5,7 +5,7 @@ import Service from "../services";
 const { responses, messages, codes } = middlewares;
 const { Blog } = Service;
 
-class BlogControllers {
+class BlogController {
   /**
    * Find all blogs
    * @param req
@@ -133,4 +133,4 @@ class BlogControllers {
   };
 }
 
-export default BlogControllers;
+export default BlogController;

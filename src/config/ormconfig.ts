@@ -1,6 +1,7 @@
 import { DataSource } from "typeorm";
 import * as dotenv from "dotenv";
 import Blog from "../database/entities/blog";
+import User from "../database/entities/user";
 
 dotenv.config();
 const { DB_USER, DB_PASSWORD, DB_DATABASE, DB_HOST } = process.env;
@@ -14,7 +15,7 @@ const connectDB =  new DataSource({
     host: DB_HOST,
     logging: false,
     synchronize: true,
-    entities: [Blog],
+    entities: [Blog, User],
     extra: {
         ssl: {
             rejectUnauthorized: false

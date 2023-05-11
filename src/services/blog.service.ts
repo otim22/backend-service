@@ -24,9 +24,7 @@ class BlogServices {
      */
     findOneBlog = async (id: number): Promise<any | null> => {
         const result = await connectDB.getRepository(Blog).findOne({ 
-            where: {
-                id
-            }
+            where: { id }
          });
 
         if (!result) {

@@ -1,9 +1,12 @@
-import BlogServices from "./blog.services";
+import BlogService from "./blog.service";
+import AuthService from "./auth.service";
 
-const Blog = new BlogServices();
+const Blog = new BlogService();
+const User = new AuthService();
 
 const Service = {
   Blog,
+  User
 };
 
 export default Service;

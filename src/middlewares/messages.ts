@@ -7,6 +7,9 @@ class Messages {
     updated = (): string => "Updated";
     deleted = (): string => "Deleted";
     error = (): string => "Error";
+    loginMessage = (): string => "Invalid Credentials";
+    unauthorizedMessage = (): string => "Unauthorized access";
+    registerMessage = (): string => "User Exists";
     notFound = (): string => "Not found";
 }
   
